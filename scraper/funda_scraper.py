@@ -5839,10 +5839,11 @@ async def scrape_data(file_name: str):
                                                                   elm['price'].get('selling_price') else None,
         'rent_price': int(elm['price']['rent_price'][0]) if isinstance(elm['price'].get('rent_price'), list) and
                                                             elm['price'].get('rent_price') else None,
-        'square_meters': elm['floor_area'][0],
-        'bedrooms': elm['number_of_bedrooms'],
+        'square_meters': elm['floor_area'][0] if elm.get('floor_area') else None,
+        'bedrooms': elm['number_of_bedrooms'] if elm.get('number_of_bedrooms') else None,
         'location': f"{elm['address']['city']}",
-        'address': f"{elm['address']['street_name']} {elm['address'].get('house_number', '')}"
+        'address': f"{elm['address']['street_name']} {elm['address'].get('house_number', '')}",
+        'image_url': 'https://www.funda.nl' + elm['object_detail_page_relative_url'] + 'media/foto/1'
     } for elm in data]
     if result:
         await ApartmentStore.create_or_update_apartment(result, file_name)

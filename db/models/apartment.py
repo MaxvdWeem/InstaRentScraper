@@ -22,6 +22,7 @@ class ApartmentSchema(BaseModel):
     location: str | None = None
     address: str | None = None
     furnished: bool | None = None
+    image_url: str | None = None
 
 
 class ApartmentStore:
