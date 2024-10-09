@@ -3,6 +3,7 @@ import logging
 import os
 import time
 import json
+import re
 
 from db.models.apartment import ApartmentStore
 from settings.config import VESTEDA_CD
@@ -5839,11 +5840,36 @@ async def scrape_data(file_name: str):
                                                                   elm['price'].get('selling_price') else None,
         'rent_price': int(elm['price']['rent_price'][0]) if isinstance(elm['price'].get('rent_price'), list) and
                                                             elm['price'].get('rent_price') else None,
-        'square_meters': elm['floor_area'][0],
-        'bedrooms': elm['number_of_bedrooms'],
+        'square_meters': elm['floor_area'][0] if elm.get('floor_area') else None,
+        'bedrooms': elm['number_of_bedrooms'] if elm.get('number_of_bedrooms') else None,
         'location': f"{elm['address']['city']}",
         'address': f"{elm['address']['street_name']} {elm['address'].get('house_number', '')}"
     } for elm in data]
+    headers = {
+        "Accept": "*/*",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 OPR/110.0.0.0",
+        "Accept-Encoding": "gzip, deflate, br",
+    }
+    pattern = r'<link\s+rel="preload"\s+fetchpriority="high"\s+as="image"\s+href="([^"]+)"'
+    for elm in result:
+        try:
+            data = await fetch_url('GET', elm['url'], 1, headers=headers)
+
+            if data is not None and isinstance(data, str):
+                image = re.search(pattern, data)
+                if image:
+                    elm['image_url'] = image.group(1)
+                else:
+                    elm['image_url'] = None
+            else:
+                elm['image_url'] = None
+
+            # Update existing element in result
+            result[result.index(elm)] = elm
+        except Exception as err:
+            logging.info(str(err))
+            logging.error(f'Unexpected error: {err}')
+
     if result:
         await ApartmentStore.create_or_update_apartment(result, file_name)
         # await check uniq result (service class in db)

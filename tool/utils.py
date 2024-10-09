@@ -43,7 +43,8 @@ def generate_rental_listings_message(user, apartments):
                 'price': apartment['rent_price'] if apartment['rent_price'] else apartment['selling_price'],
                 'bedrooms': apartment['bedrooms'],
                 'square_meters': apartment['square_meters'],
-                'url': apartment['url']
+                'url': apartment['url'],
+                'image_url': apartment['image_url']
             }
             static_message.append(email_message)
             if len(message_data) + len(message) < 4096:
