@@ -5,6 +5,7 @@ import time
 import json
 import re
 
+from bs4 import BeautifulSoup
 from db.models.apartment import ApartmentStore
 from settings.config import VESTEDA_CD
 from core.engine import fetch_url
@@ -5850,15 +5851,18 @@ async def scrape_data(file_name: str):
         "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 OPR/110.0.0.0",
         "Accept-Encoding": "gzip, deflate, br",
     }
-    pattern = r'<link\s+rel="preload"\s+fetchpriority="high"\s+as="image"\s+href="([^"]+)"'
     for elm in result:
         try:
             data = await fetch_url('GET', elm['url'], 1, headers=headers)
 
             if data is not None and isinstance(data, str):
-                image = re.search(pattern, data)
-                if image:
-                    elm['image_url'] = image.group(1)
+                image = BeautifulSoup(data, "html.parser")
+                image_link = image.find('link', {'rel': 'preload', 'fetchpriority': 'high', 'as': 'image'})
+                url = None
+                if image_link:
+                    url = image_link.get('href')
+                if url:
+                    elm['image_url'] = url
                 else:
                     elm['image_url'] = None
             else:
@@ -5866,6 +5870,7 @@ async def scrape_data(file_name: str):
 
             # Update existing element in result
             result[result.index(elm)] = elm
+            logging.info(f'Element updated {result[result.index(elm)]}')
         except Exception as err:
             logging.info(str(err))
             logging.error(f'Unexpected error: {err}')
