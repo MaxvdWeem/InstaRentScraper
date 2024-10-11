@@ -35,6 +35,10 @@ services:
     build:
       dockerfile: Dockerfile_ikwilhuren
 
+  parser7:
+    container_name: paraius_scraper
+    build:
+      dockerfile: Dockerfile_pararius
 
   user_filtering:
     container_name: user_filtering
