@@ -39,8 +39,8 @@ class ApartmentStore:
                 continue
 
         async with lifespan() as client:
-            keys_to_check_for_update = ['rent_price', 'selling_price'] if any("selling_price" in d for d in data) else [
-                'rent_price']
+            keys_to_check_for_update = ['rent_price', 'selling_price', 'image_url'] if any("selling_price" in d for d in data) else [
+                'rent_price', 'image_url']
             try:
                 logger.info(rb)
                 pong = await rb.ping()
@@ -79,16 +79,11 @@ class ApartmentStore:
 
             query = client.table('apartments').select('*')
             # Apply data based on the provided dictionary
-            if data['min_price'] and data['max_price']:
-                budget_min, budget_max = data['min_price'], data['max_price']
-                range_price = tuple(range(round(budget_min), round(budget_max)))
-                query = query.or_(f"selling_price.in.{range_price}, rent_price.in.{range_price}")
-
-            elif data['min_price']:
+            if data['min_price']:
                 query = query.or_(
                     f"selling_price.gte.{data['min_price']},rent_price.gte.{data['min_price']}"
                 )
-            elif data['max_price']:
+            if data['max_price']:
                 query = query.or_(
                     f"selling_price.lte.{data['max_price']},rent_price.lte.{data['max_price']}"
                 )
