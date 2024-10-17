@@ -5837,8 +5837,10 @@ async def add_image_url(result):
             data = await fetch_url('GET', elm['url'], 1, headers=headers)
 
             if data is not None and isinstance(data, str):
-                image = BeautifulSoup(data, "html.parser")
-                image_link = image.find('link', {'rel': 'preload', 'fetchpriority': 'high', 'as': 'image'})
+                soup_data = BeautifulSoup(data, "html.parser")
+                logging.info(soup_data)
+                image_link = soup_data.find('link', {'rel': 'preload', 'fetchpriority': 'high', 'as': 'image'})
+                logging.info(image_link)
                 url = None
                 if image_link:
                     url = image_link.get('href')
