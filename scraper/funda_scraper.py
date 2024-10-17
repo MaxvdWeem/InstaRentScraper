@@ -5851,6 +5851,7 @@ async def add_image_url(result):
 
             # Update existing element in result
             result[result.index(elm)] = elm
+            logging.info(f'Updated element {result[result.index(elm)]}')
         except Exception as err:
             logging.info(str(err))
             logging.error(f'Unexpected error: {err}')
@@ -5881,6 +5882,7 @@ async def scrape_data(file_name: str):
 
     if result:
         result = await add_image_url(result)
+        logging.info(f'{result}')
         await ApartmentStore.create_or_update_apartment(result, file_name)
         # await check uniq result (service class in db)
         # await store uniq result (service class in db )
