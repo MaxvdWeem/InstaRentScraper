@@ -5828,10 +5828,24 @@ async def main_huur():
 
 async def add_image_url(result):
     headers = {
-        "Accept": "*/*",
-        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 OPR/110.0.0.0",
-        "Accept-Encoding": "gzip, deflate, br",
+        "authority": "www.funda.nl",
+        "method": "GET",
+        "scheme": "https",
+        "priority": "u=0, i",
+        "sec-ch-ua": '"Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": '"Linux"',
+        "sec-fetch-dest": "document",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-site": "none",
+        "sec-fetch-user": "?1",
+        "upgrade-insecure-requests": "1",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.9"
     }
+
     for elm in result:
         try:
             data = await fetch_url('GET', elm['url'], 1, headers=headers)
@@ -5840,7 +5854,7 @@ async def add_image_url(result):
                 soup_data = BeautifulSoup(data, "html.parser")
                 logging.info(soup_data)
                 image_link = soup_data.find('link', {'rel': 'preload', 'fetchpriority': 'high', 'as': 'image'})
-                logging.info(image_link)
+                logging.info(f'Image link found: {image_link}')
                 url = None
                 if image_link:
                     url = image_link.get('href')
@@ -5884,7 +5898,6 @@ async def scrape_data(file_name: str):
 
     if result:
         result = await add_image_url(result)
-        logging.info(f'{result}')
         await ApartmentStore.create_or_update_apartment(result, file_name)
         # await check uniq result (service class in db)
         # await store uniq result (service class in db )
