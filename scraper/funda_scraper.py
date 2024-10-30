@@ -5824,7 +5824,7 @@ async def main_huur():
         else:
             logging.error("Received no data to process")
     return result
-    
+
 
 async def add_image_url(result):
     headers = {
@@ -5876,11 +5876,11 @@ async def add_image_url(result):
 
 
 async def scrape_data(file_name: str):
-    data_koop = await main_koop()
+    # data_koop = await main_koop()
     data_huur = await main_huur()
     data = []
-    if data_koop:
-        data.extend(data_koop)
+    # if data_koop:
+    #     data.extend(data_koop)
     if data_huur:
         data.extend(data_huur)
     result = [{

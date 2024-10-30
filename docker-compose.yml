@@ -40,6 +40,11 @@ services:
     build:
       dockerfile: Dockerfile_pararius
 
+  parser8:
+    container_name: huurwoningen_scraper
+    build:
+      dockerfile: Dockerfile_huurwoningen
+
   user_filtering:
     container_name: user_filtering
     build:
