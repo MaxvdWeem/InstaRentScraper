@@ -36,12 +36,12 @@ async def scrape_data(file_name: str):
         'order': 'desc'
     }
     result = []
-    data_kopen = await fetch_url('POST', url, payload=payload_kopen)
+    # data_kopen = await fetch_url('POST', url, payload=payload_kopen)
     data_huren = await fetch_url('POST', url, payload=payload_huren)
     data_parkeren = await fetch_url('POST', url, payload=payload_parkeren)
     data_bedrijfsruimte = await fetch_url('POST', url, payload=payload_bedrijfsruimte)
-    if data_kopen:
-        result.extend(json.loads(data_kopen)['data'])
+    # if data_kopen:
+    #     result.extend(json.loads(data_kopen)['data'])
     if data_huren:
         result.extend(json.loads(data_huren)['data'])
     if data_parkeren:
