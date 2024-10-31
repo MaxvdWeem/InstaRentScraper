@@ -5852,7 +5852,6 @@ async def add_image_url(result):
 
             if data is not None and isinstance(data, str):
                 soup_data = BeautifulSoup(data, "html.parser")
-                logging.info(soup_data)
                 image_link = soup_data.find('link', {'rel': 'preload', 'fetchpriority': 'high', 'as': 'image'})
                 logging.info(f'Image link found: {image_link}')
                 url = None
@@ -5867,7 +5866,6 @@ async def add_image_url(result):
 
             # Update existing element in result
             result[result.index(elm)] = elm
-            logging.info(f'Updated element {result[result.index(elm)]}')
         except Exception as err:
             logging.info(str(err))
             logging.error(f'Unexpected error: {err}')
